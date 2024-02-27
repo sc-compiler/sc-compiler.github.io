@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html data-theme="light">
+
+<head>
+  <title>Grokking the Sequent Calculus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script language="JavaScript">
+    function inputChange() {
+      var inputContent = document.getElementById('input').value;
+      globalCompiler(inputContent); // globalCompiler is defined and set in the Haskell code
+    }
+    function exampleSelect(input) {
+      switch (input) {
+        case 'fastmult':
+          let fastmult =
+            'def fmult(l) := label a {mult2(l;a)};\n'+
+            'def mult2(l;a) := case l of { Nil => 1, Cons(x,xs) => ifz(x,jump(0,a),x*mult2(xs;a))};\n'+
+            'def main := fmult(Cons(2,Cons(0,Cons(3,Cons(3,Nil)))));';
+          document.getElementById('input').value = fastmult;
+          break;
+        case 'example1':
+          let example1 =
+            'def fac(n) := 2;\n' +
+            'def swap(x) := case x of {Tup(a, b) => Tup(b, a)};\n' +
+            'def mult(x) := case x of {Nil=>1, Cons(y, ys) => y * mult(ys)};\n' +
+            'def swapLazy(x) := cocase { fst=>x, snd=>x.fst};\n' +
+            'def repeat(x) := cocase { hd=>x, tl=>repeat(x)};\n' +
+            'def map(f, l) := case l of {Nil=>Nil, Cons(x, xs) => Cons(f, map(f, xs))};\n' +
+            'def map(f, l) := case l of {Nil=>Nil, Cons(x, xs) => Cons(f, map(f, xs))};\n' +
+            'def multFast(x) := label a { case x of {Nil=>1, Cons(y, ys) => ifz(y,jump(0,a),y * multFast(ys))}};\n' +
+            'def main := multFast(Cons(0,Cons(3,Cons(2,Nil))));';
+          document.getElementById('input').value = example1;
+          break;
+        default:
+          document.getElementById('input').value = "";
+          break;
+      }
+      inputChange();
+    }
+  </script>
+
+</head>
+
+<body>
+  <main class="container">
+    <section>
+      <h1>Grokking the Sequent Calculus</h1>
+      <nav>
+        <select onChange="exampleSelect(this.options[this.selectedIndex].value)" aria-label="Select example...">
+          <option value="" selected disabled>Select example...</option>
+          <option value="fastmult">Fast Multiplication</option>
+          <option value="example1">Example 1</option>
+        </select>
+        <select onChange="document.documentElement.setAttribute('data-theme', this.options[this.selectedIndex].value)">
+          <option value="light" selected>Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </nav>
+    </section>
+
+
+    <h3>Input</h3>
+    <textarea id="input" rows=10 oninput="inputChange()" aria-invalid="false" spellcheck="false"></textarea>
+    <textarea id="errorpane" rows=5 readonly spellcheck="false"></textarea>
+
+    <h3>Core Representation</h3>
+
+    <details>
+      <summary role="button" class="outline secondary">Compiled</summary>
+      <p>
+        <textarea id="compiled" rows=10 readonly spellcheck="false"></textarea>
+      </p>
+    </details>
+
+    <details>
+      <summary role="button" class="outline secondary">Focused</summary>
+      <textarea id="focused" rows=10 readonly spellcheck="false"></textarea>
+    </details>
+
+    <details>
+      <summary role="button" class="outline secondary">Simplified</summary>
+      <textarea id="simplified" rows=10 readonly spellcheck="false"></textarea>
+    </details>
+
+    <h3>Evaluation</h3>
+
+    <textarea id="evaluation" rows=10 readonly spellcheck="false"></textarea>
+
+  </main>
+</body>
+<script language="javascript" src="all.js" defer></script>
+
+</html>
